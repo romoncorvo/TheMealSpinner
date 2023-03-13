@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheMealSpinner.Api", "TheMealSpinner.Api\TheMealSpinner.Api.csproj", "{48B30706-9BB9-464F-A8A5-EF6F880B5E6D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48B30706-9BB9-464F-A8A5-EF6F880B5E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48B30706-9BB9-464F-A8A5-EF6F880B5E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48B30706-9BB9-464F-A8A5-EF6F880B5E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48B30706-9BB9-464F-A8A5-EF6F880B5E6D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
