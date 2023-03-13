@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheMealSpinner.Api.Data;
@@ -36,6 +37,7 @@ namespace TheMealSpinner.Api.Controllers
         }
         
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
         {
             if (_repositories.Recipe == null)
@@ -47,6 +49,7 @@ namespace TheMealSpinner.Api.Controllers
         }
         
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Recipe>> PostRecipe(RecipeTransfer newRecipe)
         {
             if (_repositories.Recipe == null)
@@ -83,6 +86,7 @@ namespace TheMealSpinner.Api.Controllers
         
         
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutRecipe(int id, [FromBody] RecipeTransfer updatedRecipe)
         {
             if (id != updatedRecipe.Id)
@@ -106,6 +110,7 @@ namespace TheMealSpinner.Api.Controllers
         
         
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteRecipe(int id)
         {
             if (_repositories.Recipe == null)
