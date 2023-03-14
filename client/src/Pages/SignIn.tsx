@@ -12,34 +12,56 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import { useState } from "react";
+import {
+  LoginAndRegisterRequest,
+  LoginResponse,
+  SetValue,
+} from "../Utils/Types";
+import { Copyright } from "../Components/Copyright";
 
 const theme = createTheme();
 
-export default function SignIn() {
+interface signInProps {
+  setUser: SetValue<LoginResponse>;
+}
+
+export default function SignIn(props: signInProps) {
+  const [loginRequest, setLoginRequest] = useState<LoginAndRegisterRequest>({
+    username: "",
+    password: "",
+  });
+
+  const loginUser = async () => {
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...loginRequest,
+        }),
+      };
+
+      const response = await fetch(
+        `https://localhost:7191/api/UsersAuthentication/login`,
+        requestOptions
+      );
+      if (response.ok) {
+        const json = await response.json();
+        props.setUser(json);
+      }
+      return true;
+    } catch (e: any) {
+      throw new Error("Problems");
+    }
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+    loginUser();
+    setLoginRequest({
+      username: "",
+      password: "",
     });
   };
 
@@ -71,11 +93,18 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
               autoFocus
+              value={loginRequest.username}
+              onChange={e =>
+                setLoginRequest({
+                  ...loginRequest,
+                  username: e.target.value,
+                })
+              }
             />
             <TextField
               margin="normal"
@@ -86,6 +115,13 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={loginRequest.password}
+              onChange={e =>
+                setLoginRequest({
+                  ...loginRequest,
+                  password: e.target.value,
+                })
+              }
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

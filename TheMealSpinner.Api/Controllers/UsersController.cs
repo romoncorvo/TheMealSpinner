@@ -26,7 +26,7 @@ namespace TheMealSpinner.Api.Controllers
         public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest loginRequest)
         {
             var loginResponse = await _repositories.User.Login(loginRequest);
-            if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
+            if (loginResponse.Id == 0 || string.IsNullOrEmpty(loginResponse.UserName) || string.IsNullOrEmpty(loginResponse.Token))
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }

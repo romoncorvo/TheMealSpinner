@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,19 +39,19 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
+        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes(string token)
         {
             if (_repositories.Recipe == null)
             {
                 return NotFound();
             }
 
-            return await _repositories.Recipe.GetAllAsync();
+            return await _repositories.Recipe.GetAllAsync(recipe => recipe.UserId == GetIdFromToken(token));
         }
         
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Recipe>> PostRecipe(RecipeTransfer newRecipe)
+        public async Task<ActionResult<Recipe>> PostRecipe(RecipeTransfer newRecipe, string token)
         {
             if (_repositories.Recipe == null)
             {
@@ -59,6 +60,7 @@ namespace TheMealSpinner.Api.Controllers
             
             var recipe = _mapper.Map<Recipe>(newRecipe);
             recipe.Id = 0;
+            recipe.UserId = GetIdFromToken(token);
         
             await _repositories.Recipe.AddAsync(recipe);
             await _repositories.Save();
@@ -87,7 +89,7 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutRecipe(int id, [FromBody] RecipeTransfer updatedRecipe)
+        public async Task<IActionResult> PutRecipe(int id, [FromBody] RecipeTransfer updatedRecipe, string token)
         {
             if (id != updatedRecipe.Id)
             {
@@ -111,14 +113,14 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteRecipe(int id)
+        public async Task<IActionResult> DeleteRecipe(int id, string token)
         {
             if (_repositories.Recipe == null)
             {
                 return NotFound();
             }
         
-            var recipe = await _repositories.Recipe.GetFirstOrDefaultAsync(r => r.Id == id);
+            var recipe = await _repositories.Recipe.GetFirstOrDefaultAsync(r => r.Id == id && r.UserId == GetIdFromToken(token));
             if (recipe == null)
             {
                 return NotFound();
@@ -130,5 +132,11 @@ namespace TheMealSpinner.Api.Controllers
             return NoContent();
         }
         
+        private int GetIdFromToken(string idtoken)
+        {
+            var token = new JwtSecurityToken(jwtEncodedString: idtoken);
+            string id = token.Claims.First(c => c.Type == "unique_name").Value;
+            return Int32.Parse(id);
+        }
     }
 }

@@ -35,7 +35,8 @@ public class UserRepository : GenericRepositoryAsync<User>, IUserRepository
         {
             return new LoginResponse()
             {
-                User = null,
+                Id = 0,
+                UserName = "",
                 Token = ""
             };
         }
@@ -44,7 +45,8 @@ public class UserRepository : GenericRepositoryAsync<User>, IUserRepository
         {
             return new LoginResponse()
             {
-                User = null,
+                Id = 0,
+                UserName = "",
                 Token = ""
             };
         }
@@ -66,7 +68,8 @@ public class UserRepository : GenericRepositoryAsync<User>, IUserRepository
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var loginResponse = new LoginResponse()
         {
-            User = user,
+            Id = user.Id,
+            UserName = user.UserName,
             Token = tokenHandler.WriteToken(token)
         };
         
