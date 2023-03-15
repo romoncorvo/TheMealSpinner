@@ -18,7 +18,8 @@ import {
   LoginResponse,
   SetValue,
 } from "../Utils/Types";
-import { Copyright } from "../Components/Copyright";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Alert, Snackbar } from "@mui/material";
 
 const theme = createTheme();
 
@@ -31,6 +32,23 @@ export default function SignIn(props: signInProps) {
     username: "",
     password: "",
   });
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const loginUser = async () => {
     try {
@@ -50,107 +68,126 @@ export default function SignIn(props: signInProps) {
         const json = await response.json();
         props.setUser(json);
       }
-      return true;
+      return response.ok;
     } catch (e: any) {
       throw new Error("Problems");
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    loginUser();
-    setLoginRequest({
-      username: "",
-      password: "",
-    });
+    const didLogIn = await loginUser();
+    if (didLogIn) {
+      setLoginRequest({
+        username: "",
+        password: "",
+      });
+      navigate("/");
+    } else {
+      handleClick();
+    }
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
+    <div
+      // style={{ height: "100vh" }}
+      className="max-w-screen-xl mx-auto items-start shadow-2xl h-screen min-h-full mt-0"
+    >
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
           <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
+            sx={{
+              marginTop: 0,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              value={loginRequest.username}
-              onChange={e =>
-                setLoginRequest({
-                  ...loginRequest,
-                  username: e.target.value,
-                })
-              }
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={loginRequest.password}
-              onChange={e =>
-                setLoginRequest({
-                  ...loginRequest,
-                  password: e.target.value,
-                })
-              }
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+            <Avatar sx={{ m: 1, mt: 6, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
             >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+                value={loginRequest.username}
+                onChange={e =>
+                  setLoginRequest({
+                    ...loginRequest,
+                    username: e.target.value,
+                  })
+                }
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={loginRequest.password}
+                onChange={e =>
+                  setLoginRequest({
+                    ...loginRequest,
+                    password: e.target.value,
+                  })
+                }
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link href="#" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link component={RouterLink} to="/signup" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+            </Box>
           </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+        </Container>
+      </ThemeProvider>
+      <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+        <Alert
+          variant="filled"
+          onClose={handleClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          Wrong username or password!
+        </Alert>
+      </Snackbar>
+    </div>
   );
 }

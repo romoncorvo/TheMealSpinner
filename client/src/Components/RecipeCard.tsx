@@ -5,58 +5,50 @@ import {
   CardFooter,
   Typography,
   Button,
-  Tooltip,
-  IconButton,
 } from "@material-tailwind/react";
-import {
-  BanknotesIcon,
-  StarIcon,
-  HeartIcon,
-  WifiIcon,
-  HomeIcon,
-  TvIcon,
-  FireIcon,
-} from "@heroicons/react/24/solid";
+import { Rating } from "@mui/material";
+import { Recipe } from "../Utils/Types";
 
-export default function Example() {
+interface RecipeCardProps {
+  Recipe: Recipe;
+  setFavoriteId: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export default function RecipeCard(props: RecipeCardProps) {
   return (
-    <Card className="w-full max-w-[26rem] shadow-lg">
-      <CardHeader floated={false} color="blue-gray">
+    <Card className="mx-auto max-w-[26rem] shadow-lg overflow-hidden h-[26rem]">
+      <CardHeader
+        floated={false}
+        shadow={false}
+        color="transparent"
+        className="m-0 rounded-none sm:h-56"
+      >
         <img
-          src="https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+          //   height={200}
+          //   width={266}
+          src={props.Recipe.image}
           alt="ui/ux review check"
         />
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
-        <IconButton
-          size="sm"
-          color="red"
-          variant="text"
-          className="!absolute top-4 right-4 rounded-full"
-        >
-          <HeartIcon className="h-6 w-6" />
-        </IconButton>
       </CardHeader>
-      <CardBody>
-        <div className="mb-3 flex items-center justify-between">
-          <Typography variant="h5" color="blue-gray" className="font-medium">
-            Wooden House, Florida
-          </Typography>
-          <Typography
-            color="blue-gray"
-            className="flex items-center gap-1.5 font-normal"
-          >
-            <StarIcon className="-mt-0.5 h-5 w-5 text-yellow-700" />
-            5.0
-          </Typography>
-        </div>
-        <Typography color="gray">
-          Enter a freshly updated and thoughtfully furnished peaceful home
-          surrounded by ancient trees, stone walls, and open meadows.
+      <CardBody className="sm:h-36 flex flex-col items-center justify-between pt-2 pb-0 ">
+        <Typography variant="h5" color="blue-gray" className="font-bold">
+          {props.Recipe.title}
+        </Typography>
+        <Typography
+          color="blue-gray"
+          className="flex items-center gap-1.5 font-normal"
+        >
+          <Rating name="read-only" value={props.Recipe.rating} readOnly />
         </Typography>
       </CardBody>
       <CardFooter className="pt-3">
-        <Button size="lg" fullWidth={true}>
-          Reserve
+        <Button
+          size="lg"
+          fullWidth={true}
+          onClick={() => props.setFavoriteId(props.Recipe.id)}
+        >
+          Full recipe
         </Button>
       </CardFooter>
     </Card>

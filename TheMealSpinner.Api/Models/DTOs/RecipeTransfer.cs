@@ -15,4 +15,7 @@ public class RecipeTransfer
     public List<string> Times { get; set; }
     [JsonPropertyName("image")]
     public string Image { get; set; }
+    public int? UserId { get; set; }
+    public int? Rating { get; set; }
+    public string? Comment { get; set; }
 }

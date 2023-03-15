@@ -25,6 +25,6 @@ public class Recipe
     [ValidateNever]
     [JsonIgnore]
     public User User { get; set; }
-    public string? Rating { get; set; }
+    public int? Rating { get; set; }
     public string? Comment { get; set; }
 }

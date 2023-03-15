@@ -39,14 +39,15 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes(string token)
+        public async Task<ActionResult<List<RecipeTransfer>>> GetRecipes(string token)
         {
             if (_repositories.Recipe == null)
             {
                 return NotFound();
             }
 
-            return await _repositories.Recipe.GetAllAsync(recipe => recipe.UserId == GetIdFromToken(token));
+            var recipes =await _repositories.Recipe.GetAllAsync(recipe => recipe.UserId == GetIdFromToken(token));
+            return recipes.Select(recipe => _mapper.Map<RecipeTransfer>(recipe)).ToList();
         }
         
         [HttpPost]
@@ -91,7 +92,7 @@ namespace TheMealSpinner.Api.Controllers
         [Authorize]
         public async Task<IActionResult> PutRecipe(int id, [FromBody] RecipeTransfer updatedRecipe, string token)
         {
-            if (id != updatedRecipe.Id)
+            if (id != updatedRecipe.Id || updatedRecipe.UserId != GetIdFromToken(token))
             {
                 return BadRequest();
             }

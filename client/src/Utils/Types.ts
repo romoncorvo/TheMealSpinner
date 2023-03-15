@@ -11,6 +11,8 @@ export interface Recipe {
     instructions: Instruction[];
     times: string[];
     image: string;
+    rating: number | null,
+    comment: string | null
 }
 
 export interface LoginAndRegisterRequest {

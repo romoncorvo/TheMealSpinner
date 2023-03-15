@@ -6,8 +6,10 @@ import {
   Button,
   IconButton,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginResponse, SetValue } from "../Utils/Types";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 
 interface MyNavbarProps {
   user: LoginResponse;
@@ -16,6 +18,7 @@ interface MyNavbarProps {
 
 export default function MyNavbar(props: MyNavbarProps) {
   const [openNav, setOpenNav] = useState(false);
+  const navigate = useNavigate();
 
   function handleLogout() {
     console.log(props.user);
@@ -24,6 +27,7 @@ export default function MyNavbar(props: MyNavbarProps) {
       userName: "",
       token: "",
     });
+    navigate("/");
   }
 
   useEffect(() => {
@@ -38,7 +42,7 @@ export default function MyNavbar(props: MyNavbarProps) {
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+        color="white"
         className="p-1 font-normal"
       >
         <Link to={`/`} className="flex items-center text-xl">
@@ -49,10 +53,14 @@ export default function MyNavbar(props: MyNavbarProps) {
         <Typography
           as="li"
           variant="small"
-          color="blue-gray"
+          color="white"
           className="p-1 font-normal"
         >
-          <Link to={`/favorites`} className="flex items-center text-xl">
+          <Link
+            to={`/favorites`}
+            state={{ favoriteIdWhenRouted: 0 }}
+            className="flex items-center text-xl"
+          >
             Favorite Recipes
           </Link>
         </Typography>
@@ -61,30 +69,34 @@ export default function MyNavbar(props: MyNavbarProps) {
   );
 
   return (
-    <Navbar className="mx-auto max-w-full py-2 px-4 lg:px-8 lg:py-4">
-      <div className="container max-w-full  mx-auto flex items-center justify-between text-blue-gray-900">
+    <Navbar className="mx-auto max-w-full py-2 px-4 lg:px-8 lg:py-4 bg-[#3459E6] rounded-none border-none">
+      <div className="container max-w-full  mx-auto flex items-center justify-between text-white">
         <Link
           to={`/`}
           className="mr-4 cursor-pointer py-1.5 font-normal text-2xl"
         >
           <span>The Meal Spinner</span>
         </Link>
-        <div className="hidden lg:block">{navList}</div>
-        <div className="hidden lg:block">
+        <div className="hidden lg:block text-white">{navList}</div>
+        <div className="hidden lg:block text-white">
           {!props.user.token ? (
             <>
               <Button
                 variant="outlined"
                 size="sm"
+                color="white"
                 className="hidden lg:inline-block text-md mr-2"
               >
                 <Link to={`/login`}>
-                  <span>Sign in</span>
+                  <span>
+                    <LoginOutlinedIcon /> Sign in
+                  </span>
                 </Link>
               </Button>
               <Button
                 variant="filled"
                 size="sm"
+                color="white"
                 className="hidden lg:inline-block text-md"
               >
                 <Link to={`/signup`}>
@@ -101,7 +113,9 @@ export default function MyNavbar(props: MyNavbarProps) {
               className="hidden lg:inline-block text-md"
               onClick={handleLogout}
             >
-              <span>Logout</span>
+              <span>
+                <LogoutOutlinedIcon /> Logout
+              </span>
             </Button>
           )}
         </div>
@@ -151,6 +165,7 @@ export default function MyNavbar(props: MyNavbarProps) {
               <Button
                 variant="outlined"
                 size="sm"
+                color="white"
                 fullWidth
                 className="mb-2 text-sm"
               >
@@ -179,7 +194,9 @@ export default function MyNavbar(props: MyNavbarProps) {
               className="mb-2 text-sm"
               onClick={handleLogout}
             >
-              <span>Logout</span>
+              <span>
+                Logout <LogoutOutlinedIcon />
+              </span>
             </Button>
           )}
         </div>
