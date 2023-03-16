@@ -33,10 +33,15 @@ export default function SignIn(props: signInProps) {
     password: "",
   });
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [openForgotPassword, setOpenForgotPassword] = useState(false);
 
-  const handleClick = () => {
-    setOpen(true);
+  const handleClickError = () => {
+    setOpenError(true);
+  };
+
+  const handleClickForgotPassword = () => {
+    setOpenForgotPassword(true);
   };
 
   const handleClose = (
@@ -47,7 +52,8 @@ export default function SignIn(props: signInProps) {
       return;
     }
 
-    setOpen(false);
+    setOpenError(false);
+    setOpenForgotPassword(false);
   };
 
   const loginUser = async () => {
@@ -84,7 +90,7 @@ export default function SignIn(props: signInProps) {
       });
       navigate("/");
     } else {
-      handleClick();
+      handleClickError();
     }
   };
 
@@ -164,7 +170,12 @@ export default function SignIn(props: signInProps) {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link
+                    component={RouterLink}
+                    to="/login"
+                    variant="body2"
+                    onClick={handleClickForgotPassword}
+                  >
                     Forgot password?
                   </Link>
                 </Grid>
@@ -178,7 +189,23 @@ export default function SignIn(props: signInProps) {
           </Box>
         </Container>
       </ThemeProvider>
-      <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+      <Snackbar
+        open={openForgotPassword}
+        autoHideDuration={2000}
+        onClose={handleClose}
+      >
+        <Alert
+          variant="filled"
+          onClose={handleClose}
+          severity="warning"
+          sx={{
+            width: "100%",
+          }}
+        >
+          Ha-Ha! Tough luck!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={2000} onClose={handleClose}>
         <Alert
           variant="filled"
           onClose={handleClose}

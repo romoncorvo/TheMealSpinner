@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import "./SpinningWheel.css";
 import KebabDiningIcon from "@mui/icons-material/KebabDining";
 import EggIcon from "@mui/icons-material/Egg";

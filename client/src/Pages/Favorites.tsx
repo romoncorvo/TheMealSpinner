@@ -38,6 +38,7 @@ function Favorites(props: FavoritesProps) {
 
   useEffect(() => {
     setFavoriteId(state.favoriteIdWhenRouted);
+    window.scrollTo(0, 0);
   }, [state]);
 
   return (

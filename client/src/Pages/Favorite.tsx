@@ -1,5 +1,5 @@
 import { Button, Textarea } from "@material-tailwind/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LoginResponse, Recipe } from "../Utils/Types";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import {
@@ -58,6 +58,10 @@ function Favorite(props: FavoriteProps) {
       throw new Error("Problems");
     }
   }
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   async function deleteRecipe() {
     try {
