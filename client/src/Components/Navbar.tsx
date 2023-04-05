@@ -182,7 +182,7 @@ export default function MyNavbar(props: MyNavbarProps) {
                 <Link to={`/signup`}>
                   <span>Sign up</span>
                 </Link>
-              </Button>{" "}
+              </Button>
             </>
           ) : (
             <Button

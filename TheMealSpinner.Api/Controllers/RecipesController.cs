@@ -19,7 +19,7 @@ namespace TheMealSpinner.Api.Controllers
         private readonly IRandomRecipeApiService _randomRecipeApiService;
         private readonly IMapper _mapper;
 
-        public RecipesController(ApplicationDbContext context, IRepositories repositories, IRandomRecipeApiService randomRecipeApiService, IMapper mapper)
+        public RecipesController(IRepositories repositories, IRandomRecipeApiService randomRecipeApiService, IMapper mapper)
         {
             _repositories = repositories;
             _randomRecipeApiService = randomRecipeApiService;
@@ -39,12 +39,15 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<RecipeTransfer>>> GetRecipes(string token)
+        public async Task<ActionResult<List<RecipeTransfer>>> GetRecipes()
         {
             if (_repositories.Recipe == null)
             {
                 return NotFound();
             }
+
+            var token = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+            
 
             var recipes =await _repositories.Recipe.GetAllAsync(recipe => recipe.UserId == GetIdFromToken(token));
             return recipes.Select(recipe => _mapper.Map<RecipeTransfer>(recipe)).ToList();
@@ -52,12 +55,14 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Recipe>> PostRecipe(RecipeTransfer newRecipe, string token)
+        public async Task<ActionResult<Recipe>> PostRecipe(RecipeTransfer newRecipe)
         {
             if (_repositories.Recipe == null)
             {
                 return Problem("Entity set 'RecipeContext.Recipe'  is null.");
             }
+            
+            var token = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
             
             var recipe = _mapper.Map<Recipe>(newRecipe);
             recipe.Id = 0;
@@ -90,8 +95,9 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutRecipe(int id, [FromBody] RecipeTransfer updatedRecipe, string token)
+        public async Task<IActionResult> PutRecipe(int id, [FromBody] RecipeTransfer updatedRecipe)
         {
+            var token = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
             if (id != updatedRecipe.Id || updatedRecipe.UserId != GetIdFromToken(token))
             {
                 return BadRequest();
@@ -114,12 +120,14 @@ namespace TheMealSpinner.Api.Controllers
         
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteRecipe(int id, string token)
+        public async Task<IActionResult> DeleteRecipe(int id)
         {
             if (_repositories.Recipe == null)
             {
                 return NotFound();
             }
+            
+            var token = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
         
             var recipe = await _repositories.Recipe.GetFirstOrDefaultAsync(r => r.Id == id && r.UserId == GetIdFromToken(token));
             if (recipe == null)
@@ -133,10 +141,10 @@ namespace TheMealSpinner.Api.Controllers
             return NoContent();
         }
         
-        private int GetIdFromToken(string idtoken)
+        private int GetIdFromToken(string token)
         {
-            var token = new JwtSecurityToken(jwtEncodedString: idtoken);
-            string id = token.Claims.First(c => c.Type == "unique_name").Value;
+            var jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
+            string id = jwtSecurityToken.Claims.First(c => c.Type == "unique_name").Value;
             return Int32.Parse(id);
         }
     }
